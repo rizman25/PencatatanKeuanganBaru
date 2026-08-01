@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Nunito',system-ui,sans-serif}
+  a{color:#3a4a5a}a:hover{color:#1f2b38}
+  .num{font-family:'Nunito',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+  .sketch{font-family:'Nunito',system-ui,sans-serif;font-weight:800;letter-spacing:-.01em}
+  .noscroll::-webkit-scrollbar{display:none}
+  input,button,select,textarea{font-family:inherit}
+  input:focus,textarea:focus{outline:1.5px solid #a86b3c}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#e9e5df;display:flex;align-items:center;justify-content:center;padding:32px;gap:36px;flex-wrap:wrap">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:230px">
+    <div class="sketch" style="font-size:26px;font-weight:700;color:#2b2b2b;line-height:1.05">Pencatatan Keuangan</div>
+    <div class="sketch" style="font-size:15px;color:#7a756c">Wireframe prototype · alur bisa diklik · semua teks Bahasa Indonesia</div>
+    <div style="margin-top:10px;border-top:1.5px dashed #c8c5c0;padding-top:10px;font-size:12px;line-height:1.7;color:#8a857c">
+      <div class="sketch" style="font-weight:700;color:#5a554c;font-size:13px;margin-bottom:2px">Coba ini:</div>
+      Ketuk <b>＋</b> untuk catat transaksi · ketuk transaksi untuk edit/hapus · ganti tab di bawah · geser segmen Dompet／Kategori &amp; Hutang／Piutang.
+    </div>
+  </div>
+
+  <div style="width:390px;height:844px;background:#2b2b2b;border-radius:46px;padding:11px;box-shadow:0 24px 60px rgba(0,0,0,.28);flex:none">
+    <div style="width:100%;height:100%;background:#fbfaf8;border-radius:36px;overflow:hidden;position:relative;display:flex;flex-direction:column">
+
+      <!-- status bar -->
+      <div style="height:40px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;font-size:13px;font-weight:600;color:#2b2b2b">
+        <span class="num">9:41</span>
+        <span style="display:flex;gap:5px;align-items:center"><span style="width:16px;height:9px;border:1.4px solid #2b2b2b;border-radius:2px;display:inline-block"></span><span style="width:14px;height:9px;background:#2b2b2b;border-radius:2px;display:inline-block"></span></span>
+      </div>
+
+      <!-- scroll area -->
+      <div class="noscroll" style="flex:1;overflow-y:auto;overflow-x:hidden;position:relative">
+
+        <!-- ============ BERANDA ============ -->
+        <sc-if value="{{ isBeranda }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:6px 18px 96px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:6px 0 16px">
+            <div>
+              <div class="sketch" style="font-size:26px;font-weight:700;color:#2b2b2b;line-height:1">Beranda</div>
+              <div style="font-size:12.5px;color:#8a857c;margin-top:3px">Rumah Tangga · Keluarga Kami</div>
+            </div>
+            <div style="display:flex">
+              <div style="width:30px;height:30px;border-radius:50%;background:#dcd6cc;border:1.5px solid #fbfaf8;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#6b6459">A</div>
+              <div style="width:30px;height:30px;border-radius:50%;background:#cdd3cc;border:1.5px solid #fbfaf8;margin-left:-9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#5c665c">R</div>
+            </div>
+          </div>
+
+          <!-- total saldo -->
+          <div onClick="{{ goDompet }}" style="background:#2b2b2b;border-radius:16px;padding:20px 20px 18px;color:#fbfaf8;cursor:pointer">
+            <div style="font-size:12.5px;letter-spacing:.03em;color:#b8b2a6">Total Saldo · semua dompet</div>
+            <div class="num" style="font-size:34px;font-weight:700;letter-spacing:-.01em;margin-top:5px">{{ totalSaldo }}</div>
+            <div style="display:flex;gap:22px;margin-top:16px;border-top:1px solid #4a463f;padding-top:14px">
+              <div>
+                <div style="font-size:11.5px;color:#b8b2a6">Pemasukan · Juli</div>
+                <div class="num" style="font-size:15px;font-weight:700;margin-top:2px">+ {{ incomeMonth }}</div>
+              </div>
+              <div>
+                <div style="font-size:11.5px;color:#b8b2a6">Pengeluaran · Juli</div>
+                <div class="num" style="font-size:15px;font-weight:700;margin-top:2px">− {{ expenseMonth }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- cash-flow chart -->
+          <div style="margin-top:18px;background:#fff;border:1.5px solid #ded9d1;border-radius:16px;padding:15px 16px 13px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:13.5px;font-weight:700;color:#2b2b2b">Arus Kas · 4 bulan</div>
+              <div style="display:flex;gap:11px">
+                <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a857c"><span style="width:9px;height:9px;border-radius:2px;background:#2b2b2b"></span>Masuk</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#8a857c"><span style="width:9px;height:9px;border-radius:2px;background:#a86b3c"></span>Keluar</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;gap:8px">
+              <sc-for list="{{ chartMonths }}" as="m" hint-placeholder-count="4">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px">
+                  <div style="display:flex;gap:4px;align-items:flex-end;height:84px">
+                    <div style="width:13px;height:{{ m.inH }};background:#2b2b2b;border-radius:3px 3px 0 0"></div>
+                    <div style="width:13px;height:{{ m.exH }};background:#a86b3c;border-radius:3px 3px 0 0"></div>
+                  </div>
+                  <div style="font-size:11px;color:#948f86;font-weight:600">{{ m.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- alerts -->
+          <div style="margin-top:20px">
+            <div class="sketch" style="font-size:16px;font-weight:700;color:#5a554c;margin-bottom:9px">Perlu Perhatian</div>
+            <sc-for list="{{ alerts }}" as="al" hint-placeholder-count="2">
+              <div onClick="{{ al.onClick }}" style="display:flex;gap:11px;align-items:flex-start;background:#fbf3e8;border:1.5px solid #e6cba6;border-radius:12px;padding:12px 13px;margin-bottom:9px;cursor:pointer">
+                <div style="width:22px;height:22px;flex:none;border-radius:50%;background:#a86b3c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">!</div>
+                <div style="flex:1">
+                  <div style="font-size:13.5px;color:#4a3f30;line-height:1.35">{{ al.text }}</div>
+                  <div style="font-size:11.5px;color:#9a7c52;margin-top:2px">{{ al.sub }}</div>
+                </div>
+                <div style="color:#b58a5a;font-size:18px;line-height:1">›</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- recent -->
+          <div style="margin-top:16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+              <div class="sketch" style="font-size:16px;font-weight:700;color:#5a554c">Transaksi Terakhir</div>
+              <div onClick="{{ goTransaksi }}" style="font-size:12.5px;color:#3a4a5a;cursor:pointer">Lihat semua ›</div>
+            </div>
+            <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;overflow:hidden">
+              <sc-for list="{{ recent }}" as="tx" hint-placeholder-count="4">
+                <div onClick="{{ tx.onClick }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #efeae2;cursor:pointer">
+                  <div style="width:34px;height:34px;flex:none;border-radius:9px;background:#f1ece4;border:1.5px solid #e2ddd3;display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a756c;font-size:15px">{{ tx.sign }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:14px;color:#2b2b2b;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ tx.title }}</div>
+                    <div style="font-size:11.5px;color:#948f86;margin-top:1px">{{ tx.sub }}</div>
+                  </div>
+                  <div class="num" style="font-size:14px;font-weight:700;color:#2b2b2b;white-space:nowrap">{{ tx.signAmount }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ============ TRANSAKSI ============ -->
+        <sc-if value="{{ isTransaksi }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:6px 18px 96px">
+          <div style="margin:6px 0 12px">
+            <div class="sketch" style="font-size:26px;font-weight:700;color:#2b2b2b;line-height:1">Transaksi</div>
+            <div style="font-size:12.5px;color:#8a857c;margin-top:3px">Juli 2026 · lini masa</div>
+          </div>
+          <!-- filter -->
+          <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto" class="noscroll">
+            <sc-for list="{{ txFilters }}" as="f" hint-placeholder-count="4">
+              <div onClick="{{ f.onClick }}" style="{{ f.style }}">{{ f.label }}</div>
+            </sc-for>
+          </div>
+          <sc-for list="{{ timeline }}" as="g" hint-placeholder-count="3">
+            <div style="margin-bottom:16px">
+              <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px">{{ g.dateLabel }}</div>
+              <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;overflow:hidden">
+                <sc-for list="{{ g.items }}" as="tx" hint-placeholder-count="2">
+                  <div onClick="{{ tx.onClick }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #efeae2;cursor:pointer">
+                    <div style="width:34px;height:34px;flex:none;border-radius:9px;background:#f1ece4;border:1.5px solid #e2ddd3;display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a756c;font-size:15px">{{ tx.sign }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:14px;color:#2b2b2b;font-weight:600;display:flex;align-items:center;gap:6px">
+                        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ tx.title }}</span>
+                        <sc-if value="{{ tx.isCicilan }}"><span style="font-size:10px;font-weight:700;color:#a86b3c;border:1px solid #e6cba6;background:#fbf3e8;border-radius:5px;padding:1px 5px;flex:none">CICILAN</span></sc-if>
+                      </div>
+                      <div style="font-size:11.5px;color:#948f86;margin-top:1px">{{ tx.sub }}</div>
+                    </div>
+                    <div class="num" style="font-size:14px;font-weight:700;color:#2b2b2b;white-space:nowrap">{{ tx.signAmount }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <!-- ============ DOMPET / KATEGORI ============ -->
+        <sc-if value="{{ isDompet }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:6px 18px 96px">
+          <div class="sketch" style="font-size:26px;font-weight:700;color:#2b2b2b;line-height:1;margin:6px 0 12px">Kelola</div>
+          <div style="display:flex;background:#eee9e1;border-radius:11px;padding:4px;margin-bottom:16px">
+            <div onClick="{{ segDompet }}" style="{{ styDompetSeg }}">Dompet</div>
+            <div onClick="{{ segKategori }}" style="{{ styKategoriSeg }}">Kategori</div>
+          </div>
+
+          <sc-if value="{{ showDompetList }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;overflow:hidden;margin-bottom:14px">
+              <sc-for list="{{ walletList }}" as="w" hint-placeholder-count="4">
+                <div onClick="{{ w.onClick }}" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #efeae2;cursor:pointer">
+                  <div style="width:36px;height:36px;flex:none;border-radius:9px;background:#f1ece4;border:1.5px solid #e2ddd3;display:flex;align-items:center;justify-content:center;font-weight:700;color:#7a756c;font-size:13px">{{ w.tag }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:14.5px;color:#2b2b2b;font-weight:600">{{ w.name }}</div>
+                    <div style="font-size:11px;color:#a09a90;margin-top:1px">Saldo awal {{ w.initial }}</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="num" style="font-size:15px;font-weight:700;color:#2b2b2b">{{ w.balance }}</div>
+                    <div style="font-size:10.5px;color:#a09a90">saldo kini</div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="display:flex;justify-content:space-between;padding:13px 14px;background:#faf6ef">
+                <div style="font-size:13.5px;font-weight:700;color:#5a554c">Total</div>
+                <div class="num" style="font-size:15px;font-weight:700;color:#2b2b2b">{{ totalSaldo }}</div>
+              </div>
+            </div>
+            <div onClick="{{ addWallet }}" style="border:1.5px dashed #c2bcb0;border-radius:12px;padding:13px;text-align:center;color:#7a756c;font-weight:600;font-size:13.5px;cursor:pointer">＋ Tambah Dompet</div>
+
+            <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin:22px 0 7px">Rumah Tangga</div>
+            <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;overflow:hidden">
+              <sc-for list="{{ members }}" as="m" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid #efeae2">
+                  <div style="width:34px;height:34px;flex:none;border-radius:50%;background:#e7e1d6;display:flex;align-items:center;justify-content:center;font-weight:800;color:#6b6459;font-size:14px">{{ m.initial }}</div>
+                  <div style="flex:1;font-size:14px;color:#2b2b2b;font-weight:600">{{ m.name }}</div>
+                  <div style="font-size:11px;color:#a09a90">{{ m.tag }}</div>
+                </div>
+              </sc-for>
+              <div style="padding:13px 14px;background:#faf6ef">
+                <div style="font-size:12px;color:#8a857c;margin-bottom:7px">Kode Undangan · bagikan untuk mengajak anggota</div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <div class="num" style="flex:1;letter-spacing:.14em;font-size:18px;font-weight:800;color:#2b2b2b;background:#fff;border:1.5px dashed #cfc9bd;border-radius:10px;padding:9px 12px;text-align:center">{{ inviteCode }}</div>
+                  <div onClick="{{ copyCode }}" style="flex:none;background:#2b2b2b;color:#fbfaf8;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;cursor:pointer">Salin</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showKategoriList }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px">Kategori Pemasukan</div>
+            <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;overflow:hidden;margin-bottom:16px">
+              <sc-for list="{{ incomeCats }}" as="c" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #efeae2">
+                  <div style="flex:1;font-size:14px;color:#2b2b2b;font-weight:600">{{ c.name }}</div>
+                  <div onClick="{{ c.onArchive }}" style="font-size:12px;color:#8a857c;border:1.5px solid #ded9d1;border-radius:7px;padding:4px 9px;cursor:pointer">Arsipkan</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px">Kategori Pengeluaran</div>
+            <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;overflow:hidden;margin-bottom:14px">
+              <sc-for list="{{ expenseCats }}" as="c" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #efeae2">
+                  <div style="flex:1;font-size:14px;color:#2b2b2b;font-weight:600">{{ c.name }}</div>
+                  <div onClick="{{ c.onArchive }}" style="font-size:12px;color:#8a857c;border:1.5px solid #ded9d1;border-radius:7px;padding:4px 9px;cursor:pointer">Arsipkan</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasArchived }}">
+              <div style="font-size:12px;font-weight:700;color:#b0a99d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px">Arsip</div>
+              <div style="background:#f4f1ea;border:1.5px dashed #d5cfc4;border-radius:14px;overflow:hidden;margin-bottom:14px">
+                <sc-for list="{{ archivedCats }}" as="c" hint-placeholder-count="1">
+                  <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #e7e2d9">
+                    <div style="flex:1;font-size:13.5px;color:#a09a90;text-decoration:line-through">{{ c.name }}</div>
+                    <div onClick="{{ c.onArchive }}" style="font-size:12px;color:#5a554c;border:1.5px solid #cfc9bd;border-radius:7px;padding:4px 9px;cursor:pointer">Pulihkan</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div onClick="{{ addWallet }}" style="border:1.5px dashed #c2bcb0;border-radius:12px;padding:13px;text-align:center;color:#7a756c;font-weight:600;font-size:13.5px;cursor:pointer">＋ Tambah Kategori</div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <!-- ============ ANGGARAN ============ -->
+        <sc-if value="{{ isAnggaran }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:6px 18px 96px">
+          <div style="margin:6px 0 16px">
+            <div class="sketch" style="font-size:26px;font-weight:700;color:#2b2b2b;line-height:1">Anggaran</div>
+            <div style="font-size:12.5px;color:#8a857c;margin-top:3px">Juli 2026 · batas bulanan per kategori</div>
+          </div>
+          <sc-for list="{{ budgetList }}" as="b" hint-placeholder-count="4">
+            <div style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;padding:14px;margin-bottom:11px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div style="font-size:14.5px;font-weight:700;color:#2b2b2b">{{ b.name }}</div>
+                <div style="font-size:12px;font-weight:700;color:{{ b.pctColor }}">{{ b.pctLabel }}</div>
+              </div>
+              <div style="height:9px;background:#eee9e1;border-radius:5px;margin:9px 0 8px;overflow:hidden">
+                <div style="height:100%;width:{{ b.barWidth }};background:{{ b.barColor }};border-radius:5px"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#8a857c">
+                <span class="num">Terpakai {{ b.spent }}</span>
+                <span class="num">Batas {{ b.limit }}</span>
+              </div>
+              <sc-if value="{{ b.over }}"><div style="font-size:12px;color:#a86b3c;font-weight:600;margin-top:6px">Melebihi batas {{ b.overBy }}</div></sc-if>
+            </div>
+          </sc-for>
+          <div onClick="{{ addWallet }}" style="border:1.5px dashed #c2bcb0;border-radius:12px;padding:13px;text-align:center;color:#7a756c;font-weight:600;font-size:13.5px;cursor:pointer;margin-top:3px">＋ Tambah Anggaran</div>
+        </div>
+        </sc-if>
+
+        <!-- ============ HUTANG / PIUTANG ============ -->
+        <sc-if value="{{ isHutang }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:6px 18px 96px">
+          <div class="sketch" style="font-size:26px;font-weight:700;color:#2b2b2b;line-height:1;margin:6px 0 12px">Hutang &amp; Piutang</div>
+          <div style="display:flex;background:#eee9e1;border-radius:11px;padding:4px;margin-bottom:16px">
+            <div onClick="{{ segHutang }}" style="{{ styHutangSeg }}">Hutang</div>
+            <div onClick="{{ segPiutang }}" style="{{ styPiutangSeg }}">Piutang</div>
+          </div>
+          <div style="font-size:12.5px;color:#8a857c;margin-bottom:12px">{{ debtIntro }}</div>
+          <sc-for list="{{ debtList }}" as="d" hint-placeholder-count="2">
+            <div onClick="{{ d.onClick }}" style="background:#fff;border:1.5px solid #ded9d1;border-radius:14px;padding:14px;margin-bottom:11px;cursor:pointer">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                  <div style="font-size:14.5px;font-weight:700;color:#2b2b2b">{{ d.name }}</div>
+                  <div style="font-size:11.5px;color:#948f86;margin-top:2px">Pokok {{ d.principal }}</div>
+                </div>
+                <div style="{{ d.statusStyle }}">{{ d.statusLabel }}</div>
+              </div>
+              <div style="height:8px;background:#eee9e1;border-radius:5px;margin:11px 0 8px;overflow:hidden">
+                <div style="height:100%;width:{{ d.paidWidth }};background:#8a857c;border-radius:5px"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12.5px">
+                <span style="color:#8a857c">Sisa <b class="num" style="color:#2b2b2b">{{ d.remaining }}</b></span>
+                <span style="color:#8a857c">{{ d.dueLabel }}</span>
+              </div>
+            </div>
+          </sc-for>
+          <div onClick="{{ addWallet }}" style="border:1.5px dashed #c2bcb0;border-radius:12px;padding:13px;text-align:center;color:#7a756c;font-weight:600;font-size:13.5px;cursor:pointer;margin-top:3px">＋ Tambah {{ debtAddLabel }}</div>
+        </div>
+        </sc-if>
+
+      </div><!-- /scroll -->
+
+      <!-- bottom nav (Lucide icons, half-floating Catat button) -->
+      <div style="flex:none;height:66px;background:#fff;border-top:1.5px solid #e2ddd3;display:flex;padding:0 6px;position:relative">
+        <div onClick="{{ navItems.0.onClick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding-top:6px">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ navItems.0.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <div style="font-size:10.5px;font-weight:600;color:{{ navItems.0.color }}">Beranda</div>
+        </div>
+        <div onClick="{{ navItems.1.onClick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding-top:6px">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ navItems.1.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
+          <div style="font-size:10.5px;font-weight:600;color:{{ navItems.1.color }}">Transaksi</div>
+        </div>
+        <div onClick="{{ navItems.2.onClick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding-top:6px;position:relative">
+          <div style="position:absolute;top:-24px;width:56px;height:56px;border-radius:50%;background:#a86b3c;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(168,107,60,.42);border:4px solid #fbfaf8">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          </div>
+          <div style="height:32px"></div>
+          <div style="font-size:10.5px;font-weight:700;color:#a86b3c">Catat</div>
+        </div>
+        <div onClick="{{ navItems.3.onClick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding-top:6px">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ navItems.3.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg>
+          <div style="font-size:10.5px;font-weight:600;color:{{ navItems.3.color }}">Anggaran</div>
+        </div>
+        <div onClick="{{ navItems.4.onClick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding-top:6px">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ navItems.4.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></svg>
+          <div style="font-size:10.5px;font-weight:600;color:{{ navItems.4.color }}">Hutang</div>
+        </div>
+      </div>
+
+      <!-- ============ ADD/EDIT SHEET ============ -->
+      <sc-if value="{{ showAddTx }}">
+        <div onClick="{{ closeAdd }}" style="position:absolute;inset:0;background:rgba(30,26,20,.4);z-index:30"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;z-index:31;background:#fbfaf8;border-radius:22px 22px 0 0;max-height:88%;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,.25)" class="noscroll">
+          <div style="width:40px;height:4px;background:#d8d3ca;border-radius:3px;margin:10px auto 4px"></div>
+          <div style="padding:6px 20px 26px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <div class="sketch" style="font-size:20px;font-weight:700;color:#2b2b2b">{{ sheetTitle }}</div>
+              <div onClick="{{ closeAdd }}" style="font-size:22px;color:#948f86;cursor:pointer;line-height:1">✕</div>
+            </div>
+            <!-- type toggle -->
+            <div style="display:flex;gap:6px;margin-bottom:18px">
+              <sc-for list="{{ typeToggle }}" as="t" hint-placeholder-count="3">
+                <div onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</div>
+              </sc-for>
+            </div>
+            <!-- amount -->
+            <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Jumlah</div>
+            <div style="display:flex;align-items:center;background:#fff;border:1.5px solid #ded9d1;border-radius:12px;padding:12px 14px;margin-bottom:16px">
+              <span class="num" style="font-size:20px;font-weight:700;color:#948f86;margin-right:6px">Rp</span>
+              <input class="num" value="{{ fAmountLabel }}" onInput="{{ onAmount }}" inputmode="numeric" placeholder="0" style="border:none;background:transparent;font-size:22px;font-weight:700;color:#2b2b2b;width:100%;padding:0" />
+            </div>
+            <!-- from wallet -->
+            <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">{{ walletLabel }}</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+              <sc-for list="{{ walletChips }}" as="w" hint-placeholder-count="4">
+                <div onClick="{{ w.onClick }}" style="{{ w.style }}">{{ w.name }}</div>
+              </sc-for>
+            </div>
+            <!-- to wallet (transfer) -->
+            <sc-if value="{{ fIsTransfer }}">
+              <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Ke Dompet</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+                <sc-for list="{{ toWalletChips }}" as="w" hint-placeholder-count="4">
+                  <div onClick="{{ w.onClick }}" style="{{ w.style }}">{{ w.name }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <!-- category -->
+            <sc-if value="{{ fShowCategory }}">
+              <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Kategori</div>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+                <sc-for list="{{ categoryChips }}" as="c" hint-placeholder-count="4">
+                  <div onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.name }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <!-- linked debt -->
+            <sc-if value="{{ fHasDebt }}">
+              <div style="display:flex;align-items:center;gap:9px;background:#fbf3e8;border:1.5px solid #e6cba6;border-radius:11px;padding:11px 13px;margin-bottom:16px">
+                <div style="font-size:10px;font-weight:700;color:#a86b3c;border:1px solid #e6cba6;border-radius:5px;padding:2px 6px">CICILAN</div>
+                <div style="font-size:13px;color:#4a3f30">Terkait: {{ fDebtName }}</div>
+              </div>
+            </sc-if>
+            <!-- date + note -->
+            <div style="display:flex;gap:10px;margin-bottom:16px">
+              <div style="flex:1">
+                <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Tanggal</div>
+                <input type="date" value="{{ fDate }}" onChange="{{ onDate }}" style="width:100%;border:1.5px solid #ded9d1;border-radius:12px;padding:11px 12px;font-size:14px;color:#2b2b2b;background:#fff" />
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Catatan</div>
+            <input value="{{ fNote }}" onInput="{{ onNote }}" placeholder="opsional" style="width:100%;border:1.5px solid #ded9d1;border-radius:12px;padding:12px;font-size:14px;color:#2b2b2b;background:#fff;margin-bottom:20px" />
+            <!-- actions -->
+            <div onClick="{{ saveTx }}" style="background:#2b2b2b;color:#fbfaf8;border-radius:13px;padding:15px;text-align:center;font-size:15px;font-weight:700;cursor:pointer">{{ saveLabel }}</div>
+            <sc-if value="{{ isEditing }}">
+              <div onClick="{{ deleteTx }}" style="margin-top:10px;border:1.5px solid #d9b6b0;color:#9c4a3f;border-radius:13px;padding:14px;text-align:center;font-size:14px;font-weight:700;cursor:pointer">Hapus Transaksi</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ ONBOARDING / KODE UNDANGAN ============ -->
+      <sc-if value="{{ showOnboarding }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;z-index:50;background:#fbfaf8;display:flex;flex-direction:column;padding:64px 26px 30px;overflow-y:auto" class="noscroll">
+
+          <!-- step 0: masuk -->
+          <sc-if value="{{ obStep0 }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <div style="width:56px;height:56px;border-radius:16px;background:#2b2b2b;color:#fbfaf8;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin-bottom:20px">Rp</div>
+              <div class="sketch" style="font-size:28px;color:#2b2b2b;line-height:1.1">Pencatatan<br>Keuangan</div>
+              <div style="font-size:14px;color:#8a857c;margin-top:8px;line-height:1.45">Buku kas bersama untuk satu keluarga. Masuk dengan email — kami kirimkan tautan aman, tanpa kata sandi.</div>
+              <div style="margin-top:26px">
+                <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Email</div>
+                <input value="{{ obEmail }}" onInput="{{ onObEmail }}" placeholder="nama@email.com" inputmode="email" style="width:100%;border:1.5px solid #ded9d1;border-radius:12px;padding:14px;font-size:15px;color:#2b2b2b;background:#fff" />
+              </div>
+              <div onClick="{{ obEmailNext }}" style="margin-top:16px;background:#2b2b2b;color:#fbfaf8;border-radius:13px;padding:16px;text-align:center;font-size:15px;font-weight:700;cursor:pointer">Kirim tautan masuk</div>
+              <div style="font-size:12px;color:#b0a99d;text-align:center;margin-top:14px">Data kamu hanya terlihat oleh anggota rumah tanggamu.</div>
+            </div>
+          </sc-if>
+
+          <!-- step 1: gabung / buat -->
+          <sc-if value="{{ obStep1 }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <div onClick="{{ obBack }}" style="font-size:14px;color:#8a857c;margin-bottom:20px;cursor:pointer">‹ Kembali</div>
+              <div class="sketch" style="font-size:24px;color:#2b2b2b">Gabung ke Rumah Tangga</div>
+              <div style="font-size:14px;color:#8a857c;margin-top:8px;line-height:1.45">Minta Kode Undangan dari anggota yang sudah punya rumah tangga, lalu masukkan di sini.</div>
+              <div style="margin-top:22px">
+                <div style="font-size:12px;font-weight:700;color:#948f86;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Kode Undangan</div>
+                <input value="{{ obCode }}" onInput="{{ onObCode }}" placeholder="mis. RUMAH-4K7Q" style="width:100%;border:1.5px solid #ded9d1;border-radius:12px;padding:14px;font-size:17px;font-weight:700;letter-spacing:.1em;color:#2b2b2b;background:#fff;text-transform:uppercase" />
+              </div>
+              <div onClick="{{ obJoin }}" style="margin-top:16px;border-radius:13px;padding:16px;text-align:center;font-size:15px;font-weight:700;cursor:pointer;{{ obJoinStyle }}">Gabung</div>
+              <div style="display:flex;align-items:center;gap:12px;margin:22px 0"><div style="flex:1;height:1px;background:#e2ddd3"></div><div style="font-size:12px;color:#b0a99d">atau</div><div style="flex:1;height:1px;background:#e2ddd3"></div></div>
+              <div onClick="{{ obCreate }}" style="border:1.5px solid #ded9d1;color:#2b2b2b;border-radius:13px;padding:15px;text-align:center;font-size:14.5px;font-weight:700;cursor:pointer">Buat Rumah Tangga baru</div>
+            </div>
+          </sc-if>
+
+          <!-- step 2: selesai -->
+          <sc-if value="{{ obStep2 }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+              <div style="width:64px;height:64px;border-radius:50%;background:#e7ede7;color:#4a6b4a;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:18px">✓</div>
+              <div class="sketch" style="font-size:24px;color:#2b2b2b">{{ obDoneTitle }}</div>
+              <div style="font-size:14px;color:#8a857c;margin-top:8px;line-height:1.45;max-width:260px">{{ obDoneSub }}</div>
+              <div onClick="{{ obFinish }}" style="margin-top:24px;background:#2b2b2b;color:#fbfaf8;border-radius:13px;padding:15px 40px;font-size:15px;font-weight:700;cursor:pointer">Masuk ke aplikasi</div>
+            </div>
+          </sc-if>
+
+          <!-- step dots -->
+          <div style="display:flex;gap:7px;justify-content:center;padding-top:16px">
+            <div style="{{ obDot0 }}"></div><div style="{{ obDot1 }}"></div><div style="{{ obDot2 }}"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ INFO TOAST for archive/add stubs ============ -->
+      <sc-if value="{{ toast }}">
+        <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:88px;z-index:40;background:#2b2b2b;color:#fbfaf8;padding:11px 18px;border-radius:11px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:80%;text-align:center">{{ toast }}</div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:920}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    const TODAY = '2026-07-21';
+    this.TODAY = TODAY;
+    this.wallets = [
+      {id:'cash', name:'Cash',    tag:'CSH', initial:500000},
+      {id:'bsi',  name:'BSI',     tag:'BSI', initial:5000000},
+      {id:'bca',  name:'BCA',     tag:'BCA', initial:5000000},
+      {id:'blu',  name:'BLU BCA', tag:'BLU', initial:5000000},
+    ];
+    this.debts = [
+      {id:'hp',    dir:'payable',    name:'Cicilan HP',      principal:6000000,  due:'2026-07-24'},
+      {id:'motor', dir:'payable',    name:'Pinjaman Motor',  principal:12000000, due:'2026-12-01'},
+      {id:'budi',  dir:'receivable', name:'Pinjam ke Budi',  principal:1000000,  due:'2026-08-15'},
+      {id:'kntr',  dir:'receivable', name:'Talangan Kantor', principal:2500000,  due:'2026-07-10'},
+    ];
+    this.budgets = [
+      {id:'b1', categoryId:'makan',  limit:500000},
+      {id:'b2', categoryId:'transp', limit:800000},
+      {id:'b3', categoryId:'belanja',limit:1000000},
+      {id:'b4', categoryId:'tagihan',limit:600000},
+    ];
+    this.inviteCode = 'RUMAH-4K7Q';
+    this.members = [
+      {initial:'A', name:'Andi', tag:'Kamu'},
+      {initial:'R', name:'Rina', tag:'Anggota'},
+    ];
+    this.state = {
+      onboarded:false, obStep:0, obEmail:'', obCode:'', obCreated:false,
+      tab:'beranda',
+      dompetSeg:'dompet',
+      hutangSeg:'hutang',
+      txFilter:'semua',
+      showAddTx:false,
+      editingId:null,
+      toast:null,
+      categories:[
+        {id:'gaji',   name:'Gaji',          type:'income',  archived:false},
+        {id:'bonus',  name:'Bonus',         type:'income',  archived:false},
+        {id:'makan',  name:'Makan',         type:'expense', archived:false},
+        {id:'transp', name:'Transportasi',  type:'expense', archived:false},
+        {id:'belanja',name:'Belanja',       type:'expense', archived:false},
+        {id:'tagihan',name:'Tagihan',       type:'expense', archived:false},
+        {id:'sehat',  name:'Kesehatan',     type:'expense', archived:false},
+        {id:'lain',   name:'Lain-lain',     type:'expense', archived:true},
+      ],
+      transactions:[
+        {id:'t1', type:'income',  amount:8000000, walletId:'bca', categoryId:'gaji',    date:'2026-07-01', note:'Gaji Juli'},
+        {id:'t2', type:'expense', amount:750000,  walletId:'bca', categoryId:'belanja', date:'2026-07-02', note:'Belanja bulanan'},
+        {id:'t3', type:'transfer',amount:500000,  walletId:'bca', toWalletId:'cash',    date:'2026-07-03', note:'Tarik tunai'},
+        {id:'t4', type:'expense', amount:85000,   walletId:'cash',categoryId:'makan',   date:'2026-07-05', note:'Makan siang'},
+        {id:'t5', type:'expense', amount:120000,  walletId:'blu', categoryId:'transp',  date:'2026-07-08', note:'Bensin'},
+        {id:'t6', type:'expense', amount:60000,   walletId:'cash',categoryId:'makan',   date:'2026-07-10', note:'Kopi'},
+        {id:'t7', type:'expense', amount:350000,  walletId:'bsi', categoryId:'tagihan', date:'2026-07-12', note:'Listrik'},
+        {id:'t8', type:'expense', amount:220000,  walletId:'bca', categoryId:'makan',   date:'2026-07-15', note:'Makan keluarga'},
+        {id:'t9', type:'expense', amount:500000,  walletId:'bsi', debtId:'hp',          date:'2026-07-16', note:'Cicilan HP bln 1'},
+        {id:'t10',type:'income',  amount:1000000, walletId:'bsi', categoryId:'bonus',   date:'2026-07-18', note:'Bonus'},
+        {id:'t11',type:'expense', amount:60000,   walletId:'cash',categoryId:'makan',   date:'2026-07-19', note:'Sarapan'},
+        {id:'r1', type:'expense', amount:4000000, walletId:'bca', debtId:'motor',       date:'2026-05-10', note:'Cicilan motor'},
+        {id:'r2', type:'income',  amount:2000000, walletId:'bca', debtId:'kntr',        date:'2026-06-20', note:'Talangan dikembalikan'},
+      ],
+      // add form
+      fType:'pengeluaran', fAmount:0, fWallet:'cash', fToWallet:'bsi',
+      fCategory:null, fDate:TODAY, fNote:'', fDebt:null,
+    };
+  }
+
+  rp(n){ return 'Rp\u00a0' + Math.round(n).toLocaleString('id-ID'); }
+  bal(wid){
+    const w = this.wallets.find(x=>x.id===wid); let b = w?w.initial:0;
+    this.state.transactions.forEach(t=>{
+      if(t.type==='income' && t.walletId===wid) b+=t.amount;
+      else if(t.type==='expense' && t.walletId===wid) b-=t.amount;
+      else if(t.type==='transfer'){ if(t.walletId===wid) b-=t.amount; if(t.toWalletId===wid) b+=t.amount; }
+    });
+    return b;
+  }
+  cat(id){ return this.state.categories.find(c=>c.id===id); }
+  spent(catId){
+    return this.state.transactions
+      .filter(t=>t.type==='expense'&&t.categoryId===catId&&t.date.slice(0,7)==='2026-07')
+      .reduce((s,t)=>s+t.amount,0);
+  }
+  debtPaid(dId){
+    return this.state.transactions.filter(t=>t.debtId===dId).reduce((s,t)=>s+t.amount,0);
+  }
+  daysUntil(d){ return Math.round((new Date(d)-new Date(this.TODAY))/86400000); }
+  fmtDate(d){
+    const dt=new Date(d);
+    return dt.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+  }
+  dateLabel(d){
+    if(d===this.TODAY) return 'Hari Ini';
+    const diff=this.daysUntil(d);
+    if(diff===-1) return 'Kemarin';
+    return this.fmtDate(d);
+  }
+
+  // ---- nav / handlers ----
+  go(tab){ this.setState({tab, showAddTx:false}); }
+  flash(msg){ this.setState({toast:msg}); clearTimeout(this._tt); this._tt=setTimeout(()=>this.setState({toast:null}),1900); }
+
+  openAdd(){
+    this.setState({showAddTx:true, editingId:null, fType:'pengeluaran', fAmount:0,
+      fWallet:'cash', fToWallet:'bsi', fCategory:null, fDate:this.TODAY, fNote:'', fDebt:null});
+  }
+  openEdit(t){
+    const typeMap={income:'pemasukan',expense:'pengeluaran',transfer:'transfer'};
+    this.setState({showAddTx:true, editingId:t.id, fType:typeMap[t.type], fAmount:t.amount,
+      fWallet:t.walletId, fToWallet:t.toWalletId||'bsi', fCategory:t.categoryId||null,
+      fDate:t.date, fNote:t.note||'', fDebt:t.debtId||null});
+  }
+  openRepay(d){
+    this.setState({showAddTx:true, editingId:null,
+      fType: d.dir==='payable'?'pengeluaran':'pemasukan',
+      fAmount:0, fWallet:'cash', fToWallet:'bsi', fCategory:null,
+      fDate:this.TODAY, fNote:'Cicilan '+d.name, fDebt:d.id});
+  }
+  closeAdd(){ this.setState({showAddTx:false}); }
+  setF(k,v){ this.setState({[k]:v}); }
+  onAmount(e){ const v=parseInt((e.target.value||'').replace(/\D/g,''),10); this.setState({fAmount:isNaN(v)?0:v}); }
+  saveTx(){
+    const s=this.state;
+    if(!s.fAmount || s.fAmount<=0){ this.flash('Isi jumlah dulu'); return; }
+    const typeMap={pemasukan:'income',pengeluaran:'expense',transfer:'transfer'};
+    const type=typeMap[s.fType];
+    if(type==='transfer' && s.fWallet===s.fToWallet){ this.flash('Dompet asal & tujuan harus beda'); return; }
+    const row={ id:s.editingId||('t'+Date.now()), type, amount:s.fAmount,
+      walletId:s.fWallet, date:s.fDate, note:s.fNote };
+    if(type==='transfer') row.toWalletId=s.fToWallet;
+    else row.categoryId=s.fCategory||undefined;
+    if(s.fDebt) row.debtId=s.fDebt;
+    let list;
+    if(s.editingId) list=s.transactions.map(t=>t.id===s.editingId?row:t);
+    else list=[row,...s.transactions];
+    this.setState({transactions:list, showAddTx:false});
+    this.flash(s.editingId?'Transaksi diperbarui':'Transaksi tersimpan');
+  }
+  deleteTx(){
+    const id=this.state.editingId;
+    this.setState({transactions:this.state.transactions.filter(t=>t.id!==id), showAddTx:false});
+    this.flash('Transaksi dihapus');
+  }
+  obEmailNext(){ if(!/.+@.+/.test(this.state.obEmail)){ this.flash('Masukkan email yang valid'); return; } this.setState({obStep:1}); }
+  obJoin(){ if((this.state.obCode||'').replace(/\s/g,'').length<6){ this.flash('Kode undangan belum lengkap'); return; } this.setState({obStep:2, obCreated:false}); }
+  obCreate(){ this.setState({obStep:2, obCreated:true}); }
+  obBack(){ this.setState({obStep:0}); }
+  obFinish(){ this.setState({onboarded:true, tab:'beranda'}); }
+  toggleArchive(id){
+    this.setState({categories:this.state.categories.map(c=>c.id===id?{...c,archived:!c.archived}:c)});
+  }
+
+  buildTx(t){
+    const c=this.cat(t.categoryId);
+    const w=this.wallets.find(x=>x.id===t.walletId);
+    const w2=this.wallets.find(x=>x.id===t.toWalletId);
+    let title,sub,sign,signAmount;
+    if(t.type==='income'){ title=c?c.name:(t.debtId?'Penerimaan Piutang':'Pemasukan'); sub=w.name; sign='+'; signAmount='+ '+this.rp(t.amount); }
+    else if(t.type==='expense'){ title=c?c.name:(t.debtId?'Pembayaran Hutang':'Pengeluaran'); sub=w.name; sign='\u2212'; signAmount='\u2212 '+this.rp(t.amount); }
+    else { title='Transfer'; sub=w.name+' \u2192 '+w2.name; sign='\u21c4'; signAmount=this.rp(t.amount); }
+    if(t.note) sub=sub+' \u00b7 '+t.note;
+    return { id:t.id, title, sub, sign, signAmount, isCicilan:!!t.debtId, onClick:()=>this.openEdit(t) };
+  }
+
+  renderVals(){
+    const s=this.state;
+    const tab=s.tab;
+    const ink='#2b2b2b', accent='#a86b3c';
+
+    // totals
+    const totalSaldo=this.rp(this.wallets.reduce((a,w)=>a+this.bal(w.id),0));
+    const inMonth=s.transactions.filter(t=>t.type==='income'&&t.date.slice(0,7)==='2026-07').reduce((a,t)=>a+t.amount,0);
+    const exMonth=s.transactions.filter(t=>t.type==='expense'&&t.date.slice(0,7)==='2026-07').reduce((a,t)=>a+t.amount,0);
+
+    // cash-flow history (4 bulan)
+    const hist=[{m:'Apr',in:8500000,ex:5200000},{m:'Mei',in:9000000,ex:6100000},{m:'Jun',in:8000000,ex:7400000},{m:'Jul',in:inMonth,ex:exMonth}];
+    const maxV=Math.max(...hist.map(h=>Math.max(h.in,h.ex)),1);
+    const chartMonths=hist.map(h=>({label:h.m, inH:Math.max(Math.round(h.in/maxV*84),2)+'px', exH:Math.max(Math.round(h.ex/maxV*84),2)+'px'}));
+
+    // alerts
+    const alerts=[];
+    this.budgets.forEach(b=>{
+      const sp=this.spent(b.categoryId); const pct=Math.round(sp/b.limit*100);
+      if(pct>=80){ const c=this.cat(b.categoryId);
+        alerts.push({text:'Anggaran "'+c.name+'" sudah '+pct+'%', sub:this.rp(sp)+' dari '+this.rp(b.limit), onClick:()=>this.go('anggaran')});
+      }
+    });
+    this.debts.forEach(d=>{
+      const rem=d.principal-this.debtPaid(d.id); if(rem<=0) return;
+      const du=this.daysUntil(d.due);
+      if(du<0) alerts.push({text:(d.dir==='payable'?'Hutang':'Piutang')+' "'+d.name+'" terlambat '+Math.abs(du)+' hari', sub:'Sisa '+this.rp(rem), onClick:()=>this.go('hutang')});
+      else if(du<=7) alerts.push({text:(d.dir==='payable'?'Hutang':'Piutang')+' "'+d.name+'" jatuh tempo '+du+' hari lagi', sub:'Sisa '+this.rp(rem), onClick:()=>this.go('hutang')});
+    });
+
+    // timeline
+    const filt=s.transactions.filter(t=> s.txFilter==='semua' ? true :
+      (s.txFilter==='pemasukan'?t.type==='income':s.txFilter==='pengeluaran'?t.type==='expense':t.type==='transfer'));
+    const sorted=[...filt].sort((a,b)=> a.date<b.date?1:(a.date>b.date?-1:0));
+    const groups=[]; const map={};
+    sorted.forEach(t=>{ if(!map[t.date]){ map[t.date]={dateLabel:this.dateLabel(t.date),items:[]}; groups.push(map[t.date]); } map[t.date].items.push(this.buildTx(t)); });
+    const recent=[...s.transactions].sort((a,b)=> a.date<b.date?1:(a.date>b.date?-1:0)).slice(0,4).map(t=>this.buildTx(t));
+
+    const chip=(active)=>'flex:none;padding:8px 14px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;border:1.5px solid '+(active?ink:'#ded9d1')+';background:'+(active?ink:'#fff')+';color:'+(active?'#fbfaf8':'#7a756c');
+    const txFilters=[['semua','Semua'],['pemasukan','Pemasukan'],['pengeluaran','Pengeluaran'],['transfer','Transfer']].map(([k,l])=>({label:l,style:chip(s.txFilter===k),onClick:()=>this.setState({txFilter:k})}));
+
+    // wallets
+    const walletList=this.wallets.map(w=>({name:w.name,tag:w.tag,initial:this.rp(w.initial),balance:this.rp(this.bal(w.id)),onClick:()=>this.flash('Detail dompet '+w.name+' (stub)')}));
+
+    // categories
+    const seg=(active)=>'flex:1;text-align:center;padding:9px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;'+(active?'background:#fff;color:#2b2b2b;box-shadow:0 1px 3px rgba(0,0,0,.1)':'color:#8a857c');
+    const incomeCats=s.categories.filter(c=>c.type==='income'&&!c.archived).map(c=>({name:c.name,onArchive:()=>this.toggleArchive(c.id)}));
+    const expenseCats=s.categories.filter(c=>c.type==='expense'&&!c.archived).map(c=>({name:c.name,onArchive:()=>this.toggleArchive(c.id)}));
+    const archivedCats=s.categories.filter(c=>c.archived).map(c=>({name:c.name,onArchive:()=>this.toggleArchive(c.id)}));
+
+    // budgets
+    const budgetList=this.budgets.map(b=>{
+      const c=this.cat(b.categoryId); const sp=this.spent(b.categoryId); const pct=Math.round(sp/b.limit*100);
+      const over=sp>b.limit;
+      return { name:c.name, spent:this.rp(sp), limit:this.rp(b.limit), pctLabel:pct+'%',
+        pctColor:over?accent:(pct>=80?accent:'#8a857c'),
+        barWidth:Math.min(pct,100)+'%', barColor:over?accent:(pct>=80?'#c99a5f':ink),
+        over, overBy:this.rp(Math.max(0,sp-b.limit)) };
+    });
+
+    // debts
+    const dir=s.hutangSeg==='hutang'?'payable':'receivable';
+    const debtList=this.debts.filter(d=>d.dir===dir).map(d=>{
+      const paid=this.debtPaid(d.id); const rem=d.principal-paid; const du=this.daysUntil(d.due);
+      let label,style; const base='font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;';
+      if(rem<=0){ label='Lunas'; style=base+'background:#e7ede7;color:#4a6b4a'; }
+      else if(du<0){ label='Terlambat '+Math.abs(du)+'h'; style=base+'background:#f3ddd8;color:#9c4a3f'; }
+      else if(du<=7){ label=du+' hari lagi'; style=base+'background:#fbf3e8;color:#a86b3c'; }
+      else { label='Aktif'; style=base+'background:#eee9e1;color:#7a756c'; }
+      return { name:d.name, principal:this.rp(d.principal), remaining:this.rp(Math.max(rem,0)),
+        statusLabel:label, statusStyle:style, paidWidth:Math.min(Math.round(paid/d.principal*100),100)+'%',
+        dueLabel:(rem<=0?'Selesai':'Tempo '+this.fmtDate(d.due)), onClick:()=>this.openRepay(d) };
+    });
+
+    // nav
+    const mkNav=(k,l)=>{ const active=tab===k; return { isNormal:true, isAdd:false, label:l, color:active?ink:'#aca69b',
+      dot:'width:7px;height:7px;border-radius:50%;'+(active?'background:'+accent:'border:1.5px solid #cfc9bd'),
+      onClick:()=>this.go(k) }; };
+    const navItems=[
+      mkNav('beranda','Beranda'), mkNav('transaksi','Transaksi'),
+      { isAdd:true, isNormal:false, label:'Catat', onClick:()=>this.openAdd() },
+      mkNav('anggaran','Anggaran'), mkNav('hutang','Hutang'),
+    ];
+
+    // ---- add sheet ----
+    const typeMap={pemasukan:'income',pengeluaran:'expense',transfer:'transfer'};
+    const fIsTransfer=s.fType==='transfer';
+    const fShowCategory=!fIsTransfer && !s.fDebt;
+    const tchip=(active)=>'flex:1;text-align:center;padding:11px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid '+(active?ink:'#ded9d1')+';background:'+(active?ink:'#fff')+';color:'+(active?'#fbfaf8':'#7a756c');
+    const typeToggle=[['pemasukan','Pemasukan'],['pengeluaran','Pengeluaran'],['transfer','Transfer']].map(([k,l])=>({label:l,style:tchip(s.fType===k),onClick:()=>this.setState({fType:k, fCategory:null})}));
+    const pchip=(active)=>'padding:9px 13px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid '+(active?accent:'#ded9d1')+';background:'+(active?'#fbf3e8':'#fff')+';color:'+(active?'#a86b3c':'#5a554c');
+    const walletChips=this.wallets.map(w=>({name:w.name,style:pchip(s.fWallet===w.id),onClick:()=>this.setState({fWallet:w.id})}));
+    const toWalletChips=this.wallets.map(w=>({name:w.name,style:pchip(s.fToWallet===w.id),onClick:()=>this.setState({fToWallet:w.id})}));
+    const fType=typeMap[s.fType];
+    const catChoices=s.categories.filter(c=>!c.archived && (fType==='income'?c.type==='income':c.type==='expense'));
+    const categoryChips=catChoices.map(c=>({name:c.name,style:pchip(s.fCategory===c.id),onClick:()=>this.setState({fCategory:c.id})}));
+    const debtObj=this.debts.find(d=>d.id===s.fDebt);
+
+    // onboarding
+    const dot=(active)=>'width:7px;height:7px;border-radius:50%;'+(active?'background:'+accent:'background:#d8d3ca');
+    const validCode=(s.obCode||'').replace(/\s/g,'').length>=6;
+
+    return {
+      // onboarding
+      showOnboarding:!s.onboarded,
+      obStep0:s.obStep===0, obStep1:s.obStep===1, obStep2:s.obStep===2,
+      obEmail:s.obEmail, onObEmail:(e)=>this.setF('obEmail',e.target.value),
+      obCode:s.obCode, onObCode:(e)=>this.setF('obCode',e.target.value),
+      obEmailNext:()=>this.obEmailNext(), obJoin:()=>this.obJoin(), obCreate:()=>this.obCreate(),
+      obBack:()=>this.obBack(), obFinish:()=>this.obFinish(),
+      obJoinStyle: validCode?'background:#2b2b2b;color:#fbfaf8':'background:#eee9e1;color:#b0a99d',
+      obDoneTitle: s.obCreated?'Rumah tangga dibuat!':'Berhasil bergabung!',
+      obDoneSub: s.obCreated?'Bagikan Kode Undangan ke pasanganmu agar bisa ikut mencatat.':'Kamu kini melihat buku kas keluarga. Semua anggota punya hak yang sama.',
+      obDot0:dot(s.obStep===0), obDot1:dot(s.obStep===1), obDot2:dot(s.obStep===2),
+      // members
+      members:this.members, inviteCode:this.inviteCode, copyCode:()=>this.flash('Kode disalin: '+this.inviteCode),
+      isBeranda:tab==='beranda', isTransaksi:tab==='transaksi', isDompet:tab==='dompet',
+      isAnggaran:tab==='anggaran', isHutang:tab==='hutang',
+      showFab: (tab==='beranda'||tab==='transaksi') && !s.showAddTx,
+      totalSaldo, incomeMonth:this.rp(inMonth), expenseMonth:this.rp(exMonth), chartMonths,
+      alerts, recent, timeline:groups, txFilters,
+      goTransaksi:()=>this.go('transaksi'), goDompet:()=>this.go('dompet'),
+      // dompet/kategori
+      showDompetList:s.dompetSeg==='dompet', showKategoriList:s.dompetSeg==='kategori',
+      styDompetSeg:seg(s.dompetSeg==='dompet'), styKategoriSeg:seg(s.dompetSeg==='kategori'),
+      segDompet:()=>this.setState({dompetSeg:'dompet'}), segKategori:()=>this.setState({dompetSeg:'kategori'}),
+      walletList, incomeCats, expenseCats, archivedCats, hasArchived:archivedCats.length>0,
+      addWallet:()=>this.flash('Form tambah (stub)'),
+      // anggaran
+      budgetList,
+      // hutang
+      styHutangSeg:seg(s.hutangSeg==='hutang'), styPiutangSeg:seg(s.hutangSeg==='piutang'),
+      segHutang:()=>this.setState({hutangSeg:'hutang'}), segPiutang:()=>this.setState({hutangSeg:'piutang'}),
+      debtList, debtIntro:(dir==='payable'?'Uang yang kita pinjam. Ketuk untuk catat cicilan.':'Uang yang dipinjamkan. Ketuk untuk catat penerimaan.'),
+      debtAddLabel:dir==='payable'?'Hutang':'Piutang',
+      // nav
+      navItems,
+      // sheet
+      showAddTx:s.showAddTx, isEditing:!!s.editingId,
+      sheetTitle: s.editingId?'Edit Transaksi':(s.fDebt?'Catat Cicilan':'Transaksi Baru'),
+      saveLabel: s.editingId?'Simpan Perubahan':'Simpan',
+      openAdd:()=>this.openAdd(), closeAdd:()=>this.closeAdd(), saveTx:()=>this.saveTx(), deleteTx:()=>this.deleteTx(),
+      typeToggle, fIsTransfer, fShowCategory,
+      fAmountLabel: s.fAmount?s.fAmount.toLocaleString('id-ID'):'',
+      onAmount:(e)=>this.onAmount(e),
+      walletLabel: fIsTransfer?'Dari Dompet':'Dompet',
+      walletChips, toWalletChips, categoryChips,
+      fHasDebt:!!s.fDebt, fDebtName:debtObj?debtObj.name:'',
+      fDate:s.fDate, onDate:(e)=>this.setF('fDate',e.target.value),
+      fNote:s.fNote, onNote:(e)=>this.setF('fNote',e.target.value),
+      toast:s.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>
