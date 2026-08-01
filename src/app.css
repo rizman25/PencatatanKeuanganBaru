@@ -1,0 +1,263 @@
+/* Warm paper palette — ADR-0009. Values taken verbatim from the reviewed prototype. */
+
+:root {
+  /* surfaces */
+  --paper: #e9e5df; /* outside the phone / page backdrop */
+  --surface: #fbfaf8; /* app background */
+  --card: #ffffff;
+  --card-soft: #faf6ef; /* footer rows, totals */
+  --sunken: #eee9e1; /* segmented controls, progress tracks */
+  --tile: #f1ece4; /* icon tiles */
+
+  /* ink and text */
+  --ink: #2b2b2b;
+  --ink-on-dark: #fbfaf8;
+  --text-heading: #5a554c;
+  --text-muted: #8a857c;
+  --text-dim: #948f86;
+  --text-faint: #a09a90;
+  --text-ghost: #b0a99d;
+  --text-on-ink: #b8b2a6;
+
+  /* lines */
+  --line: #ded9d1;
+  --line-soft: #efeae2;
+  --line-dashed: #c2bcb0;
+  --line-on-ink: #4a463f;
+  --tile-line: #e2ddd3;
+
+  /* terracotta — the record action, and anything needing attention */
+  --accent: #a86b3c;
+  --accent-soft-bg: #fbf3e8;
+  --accent-soft-line: #e6cba6;
+  --accent-deep: #4a3f30;
+  --accent-mid: #9a7c52;
+  --accent-warn-bar: #c99a5f;
+
+  /* status */
+  --ok-bg: #e7ede7;
+  --ok-text: #4a6b4a;
+  --danger-bg: #f3ddd8;
+  --danger-text: #9c4a3f;
+  --danger-line: #d9b6b0;
+
+  --nav-inactive: #aca69b;
+
+  /*
+    Chart slices. Muted earth tones only: terracotta stays reserved for things
+    that genuinely need attention (ADR-0009), so no slice may borrow it and
+    imply alarm. Assigned by rank within a chart, never by category — colour
+    carries no meaning here and the legend names every slice.
+  */
+  --chart-1: #7d6a55;
+  --chart-2: #a58c6f;
+  --chart-3: #8a9a8b;
+  --chart-4: #c4b199;
+  --chart-5: #6f7d84;
+  --chart-6: #b3a288;
+  --chart-rest: #ccc5b8;
+
+  /* shape */
+  --r-card: 14px;
+  --r-panel: 16px;
+  --r-btn: 13px;
+  --r-field: 12px;
+  --r-chip: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Every money figure. Tabular so digits line up in columns — the one thing
+   worth keeping from the superseded Calm Clarity system. */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.sketch {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.noscroll {
+  scrollbar-width: none;
+}
+.noscroll::-webkit-scrollbar {
+  display: none;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 1.5px solid var(--accent);
+}
+
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+/* Shared building blocks -------------------------------------------------- */
+
+.panel {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  width: 100%;
+}
+.row:last-child {
+  border-bottom: none;
+}
+
+.tile {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 9px;
+  background: var(--tile);
+  border: 1.5px solid var(--tile-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #7a756c;
+  font-size: 15px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.page-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.field {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-field);
+  padding: 12px;
+  font-size: 14px;
+  background: var(--card);
+}
+
+.btn-primary {
+  display: block;
+  width: 100%;
+  background: var(--ink);
+  color: var(--ink-on-dark);
+  border-radius: var(--r-btn);
+  padding: 15px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+.btn-primary[disabled] {
+  background: var(--sunken);
+  color: var(--text-ghost);
+  cursor: default;
+}
+
+.btn-ghost {
+  display: block;
+  width: 100%;
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+  border-radius: var(--r-btn);
+  padding: 15px;
+  text-align: center;
+  font-size: 14.5px;
+  font-weight: 700;
+  background: var(--card);
+}
+
+.btn-danger {
+  display: block;
+  width: 100%;
+  border: 1.5px solid var(--danger-line);
+  color: var(--danger-text);
+  border-radius: var(--r-btn);
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.btn-dashed {
+  display: block;
+  width: 100%;
+  border: 1.5px dashed var(--line-dashed);
+  border-radius: 12px;
+  padding: 13px;
+  text-align: center;
+  color: #7a756c;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1.5px solid var(--danger-line);
+  border-radius: 10px;
+  padding: 10px 12px;
+}

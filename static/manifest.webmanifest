@@ -1,0 +1,13 @@
+{
+  "name": "Maalify",
+  "short_name": "Maalify",
+  "description": "Buku kas bersama untuk satu keluarga",
+  "start_url": "/beranda",
+  "display": "standalone",
+  "background_color": "#fbfaf8",
+  "theme_color": "#fbfaf8",
+  "lang": "id",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
